@@ -1,0 +1,45 @@
+# Hyper-parameters and paths for the calibrated lightweight ensemble.
+seed: 42
+image_size: 224
+batch_size: 32
+epochs: 12
+patience: 3
+folds: 3
+
+optimizer:
+  name: adamw
+  lr_backbone: 1.0e-4
+  lr_head: 1.0e-3
+  weight_decay: 1.0e-2
+  warmup_epochs: 1
+  schedule: cosine
+
+loss:
+  name: class_balanced_focal
+  beta: 0.999
+  gamma: 2.0
+
+calibration:
+  method: temperature_scaling
+  ece_bins: 15
+
+bootstrap:
+  n_resamples: 2000
+
+backbones:
+  - efficientnet_b0
+  - mobilenet_v2
+  - mobilenet_v3_small
+  - shufflenet_v2_x1_0
+  - resnet50
+  - densenet121
+
+ensembles:
+  - {name: poster_soft,     members: [efficientnet_b0, mobilenet_v2, mobilenet_v3_small], vote: soft}
+  - {name: poster_weighted, members: [efficientnet_b0, mobilenet_v2, mobilenet_v3_small], vote: weighted}
+  - {name: all_soft,        members: all, vote: soft}
+  - {name: all_weighted,    members: all, vote: weighted}
+
+paths:
+  data_dir: data
+  results_dir: results
